@@ -1,0 +1,25 @@
+spring:
+  cloud:
+    config:
+      discovery:
+        enabled: true
+      server:
+        git:
+          uri: https://github.com/franklinclf/nexus-spring-cloud-config-data.git
+          search-paths: '{application}/{profile}'
+  security:
+    user:
+      name: admin
+      password: admin
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+    register-with-eureka: true
+    fetch-registry: true
+    initial-instance-info-replication-interval-seconds: 10
+    registry-fetch-interval-seconds: 5
+
+server:
+  port: 8084
