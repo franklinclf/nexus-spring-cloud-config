@@ -11,7 +11,7 @@ variables:
   image: gradle:8.9-jdk24-alpine
 
   cache:
-    key: "$CI_COMMIT_REF_NAME" # Cache por branch
+    key: "$CI_COMMIT_REF_NAME"
     paths:
       - ~/.gradle/caches
       - ~/.gradle/wrapper
@@ -41,7 +41,5 @@ package-config-server:
     - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
 
   script:
-    - docker build -t "$CI_REGISTRY_IMAGE/config-server:$CI_COMMIT_SHORT_SHA" \
-      --build-arg JAR_FILE="$SPRING_BOOT_JAR_PATH" .
+    - docker build -t "$CI_REGISTRY_IMAGE/config-server:$CI_COMMIT_SHORT_SHA" --build-arg JAR_FILE="$SPRING_BOOT_JAR_PATH" .
     - docker push "$CI_REGISTRY_IMAGE/config-server:$CI_COMMIT_SHORT_SHA"
-    - echo "Image pushed: $CI_REGISTRY_IMAGE/config-server:$CI_COMMIT_SHORT_SHA"
