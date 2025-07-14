@@ -1,4 +1,4 @@
-FROM openjdk:24-jdk-slim-bullseye
+FROM eclipse-temurin:24-jdk-ubi9-minimal
 
 WORKDIR /app
 
