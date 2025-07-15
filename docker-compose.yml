@@ -8,27 +8,39 @@ services:
     ports:
       - "8084:8084"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://localhost-1:8084/actuator/health || exit 1" ]
       start_period: 30s
       interval: 5s
       timeout: 10s
       retries: 10
     environment:
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka/,http://host.docker.internal:8762/eureka/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/
+      - SERVER_PORT=8084
+      - REPLICA_ID=1
     restart: unless-stopped
+    networks:
+      - nexus-dev
 
   config-2:
     build:
       context: ./
     container_name: config-2
     ports:
-      - "8085:8084"
+      - "8085:8085"
     healthcheck:
-      test: [ "CMD-SHELL", "curl -f http://localhost:8084/actuator/health || exit 1" ]
+      test: [ "CMD-SHELL", "curl -f http://config-2:8085/actuator/health || exit 1" ]
       start_period: 30s
       interval: 5s
       timeout: 10s
       retries: 10
     environment:
-      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://host.docker.internal:8761/eureka/,http://host.docker.internal:8762/eureka/
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/
+      - SERVER_PORT=8085
+      - REPLICA_ID=2
     restart: unless-stopped
+    networks:
+      - nexus-dev
+
+networks:
+  nexus-dev:
+    external: true
