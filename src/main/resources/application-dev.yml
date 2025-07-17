@@ -1,37 +1,31 @@
 server:
-  port: 8084
+  port: ${PORT:8888}
+  shutdown: graceful
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}-${REPLICA_ID:1}
+    hostname: ${spring.application.name}-${REPLICA_ID:1}
+    app-group-name: ${spring.application.name}
+  client:
+    service-url:
+      defaultZone: ${EUREKA_REPLICAS:http://eureka-1:8761/eureka,http://eureka-2:8762/eureka,http://eureka-3:8763/eureka}
+    register-with-eureka: true
+    fetch-registry: true
+    instance-info-replication-interval-seconds: 15
 
 spring:
   cloud:
     config:
       discovery:
-        enabled: true
         service-id: config
       server:
         git:
-          uri: https://github.com/franklinclf/nexus-spring-cloud-config-data.git
           search-paths: '{application}/{profile}'
-          default-label: main
           clone-on-start: true
+          uri: ${GIT_URL:https://github.com/franklinclf/nexus-spring-cloud-config-data.git}
+          force-pull: true
       fail-fast: true
-      retry:
-        max-attempts: 6
-        multiplier: 1.1
-        max-interval: 2000
-        initial-interval: 1000
-
-eureka:
-  client:
-    initial-instance-info-replication-interval-seconds: 5
-    service-url:
-      defaultZone: ${EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE:http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/}
-    register-with-eureka: true
-    fetch-registry: false
-    instance-info-replication-interval-seconds: 5
-  instance:
-    instance-id: config-${REPLICA_ID:1}
-    hostname: config-${REPLICA_ID:1}
-    appname: config
 
 management:
   endpoints:
@@ -42,11 +36,41 @@ management:
         enabled: true
     access:
       default: unrestricted
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+        step: 5s
+  logging:
+    export:
+      enabled: true
   metrics:
     tags:
-      application: ${spring.application.name}
+      application: ${spring.application.name}-${REPLICA_ID:1}
+    distribution:
+      percentiles-histogram:
+        enabled: true
+        http.server.requests: true
+        http.client.requests: true
+    enable:
+      jvm: true
+      process: true
+      system: true
+  tracing:
+    sampling:
+      probability: 1
   zipkin:
     tracing:
       export:
         enabled: true
-      endpoint: http://host.docker.internal:9411/api/v2/spans
+      endpoint: http://zipkin:9411/api/v2/spans
+  endpoint:
+    metrics:
+      access: unrestricted
+    prometheus:
+      access: unrestricted
+    health:
+      show-details: always
+      show-components: always
+      probes:
+        enabled: true
