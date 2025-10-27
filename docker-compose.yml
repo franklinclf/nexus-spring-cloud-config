@@ -14,7 +14,7 @@ services:
       timeout: 10s
       retries: 10
     environment:
-      - EUREKA_REPLICAS=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/
+      - EUREKA_REPLICAS=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/,http://eureka-3:8763/eureka/
       - PORT=8084
       - REPLICA_ID=1
     restart: unless-stopped
@@ -34,7 +34,7 @@ services:
       timeout: 10s
       retries: 10
     environment:
-      - EUREKA_REPLICAS=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/
+      - EUREKA_REPLICAS=http://eureka-1:8761/eureka/,http://eureka-2:8762/eureka/,http://eureka-3:8763/eureka/
       - PORT=8085
       - REPLICA_ID=2
     restart: unless-stopped
